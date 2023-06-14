@@ -1,17 +1,13 @@
-import { createStore } from 'redux'
+import { configureStore } from '@reduxjs/toolkit'
+import authSlice from './features/auth/authSlice'
+const store = configureStore({
+  reducer: {
+    auth: authSlice,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+})
 
-const initialState = {
-  sidebarShow: true,
-}
-
-const changeState = (state = initialState, { type, ...rest }) => {
-  switch (type) {
-    case 'set':
-      return { ...state, ...rest }
-    default:
-      return state
-  }
-}
-
-const store = createStore(changeState)
 export default store
