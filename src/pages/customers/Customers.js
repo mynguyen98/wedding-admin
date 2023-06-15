@@ -13,6 +13,9 @@ import React, { useState, useEffect } from 'react'
 import { AppBreadcrumb } from 'src/components'
 // import { Link } from 'react-router-dom'
 // import { avatarLink } from 'src/utils/helpers'
+import { customFetch } from 'src/utils/axios'
+import Pagination from 'react-pagination-js'
+import 'react-pagination-js/dist/styles.css' // import css
 import {
   CContainer,
   CCard,
@@ -28,11 +31,6 @@ import {
   CTableRow,
   CTable,
   CTableBody,
-  CProgress,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
   CFormLabel,
   CFormSelect,
   CSpinner,
@@ -41,36 +39,8 @@ import {
   CAccordionHeader,
   CAccordionItem,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import {
-  cilPeople,
-  cibCcAmex,
-  cibCcApplePay,
-  cibCcMastercard,
-  cibCcPaypal,
-  cibCcStripe,
-  cibCcVisa,
-  cibGoogle,
-  cibFacebook,
-  cibLinkedin,
-  cifBr,
-  cifEs,
-  cifFr,
-  cifIn,
-  cifPl,
-  cifUs,
-  cibTwitter,
-  cilCloudDownload,
-  cilUser,
-  cilUserFemale,
-} from '@coreui/icons'
-import { fakeTableData } from 'src/utils/fakeTableData'
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
+
+import { Api } from 'src/common/constant'
 // import KolIcon from '../icons/everstarIcon/Kol'
 
 const initialSearchFields = {
@@ -83,6 +53,8 @@ const CUsers = () => {
   // const dispatch = useDispatch()
   // const columnsControl = useSelector((store) => store.cusers.columnsControl)
   // const { userId, userName, status } = columnsControl
+  const [usersList, setUsersList] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [searchFields, setSearchFields] = useState(initialSearchFields)
 
   // const handleResetPagination = () => {
@@ -104,11 +76,21 @@ const CUsers = () => {
     // handleResetPagination()
     setSearchFields({ ...initialSearchFields })
   }
-  // useEffect(() => {
-  //   handleListUser()
-  // }, [currentPage])
-  // console.log(currentPage)
-  // console.log(searchFields)
+  useEffect(() => {
+    const getListUser = async () => {
+      try {
+        setIsLoading(true)
+        const resp = await customFetch.get(Api.listUsers)
+        setUsersList(resp.data.data)
+        setIsLoading(false)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getListUser()
+  }, [])
+  if (isLoading) return
+
   return (
     <div>
       {/* <AppBreadcrumb /> */}
@@ -159,20 +141,6 @@ const CUsers = () => {
                       <option value={true}>Yes</option>
                     </CFormSelect>
                   </CCol>
-                  {/* <CCol md={4}>
-                    <CFormLabel htmlFor="inputSearchCuserTitle">Title</CFormLabel>
-                    <CFormSelect
-                      aria-label="Default select example"
-                      name="titleSearch"
-                      id="inputSearchCuserTitle"
-                      onChange={handleChangeSearchField}
-                      value={searchFields.titleSearch}
-                    >
-                      <option value="">None</option>
-                      <option value={true}>KOL</option>
-                      <option value={false}>User</option>
-                    </CFormSelect>
-                  </CCol> */}
                   <CCol md={4}>
                     <CFormLabel>Clear search fields</CFormLabel>
                     <div className="d-grid">
@@ -207,53 +175,42 @@ const CUsers = () => {
           <CTable align="middle" className="mb-0 border" hover responsive>
             <CTableHead color="light">
               <CTableRow>
-                <CTableHeaderCell className="text-center">
-                  <CIcon icon={cilPeople} />
-                </CTableHeaderCell>
-                <CTableHeaderCell>User</CTableHeaderCell>
-                <CTableHeaderCell className="text-center">Preview</CTableHeaderCell>
-                <CTableHeaderCell>Status</CTableHeaderCell>
-                <CTableHeaderCell className="text-center">Wedding Date</CTableHeaderCell>
-                <CTableHeaderCell>Management</CTableHeaderCell>
+                <CTableHeaderCell>User name</CTableHeaderCell>
+                <CTableHeaderCell>User email</CTableHeaderCell>
+                <CTableHeaderCell>UserId</CTableHeaderCell>
+                <CTableHeaderCell>Phone Number</CTableHeaderCell>
+                <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {fakeTableData.map((item, index) => (
+              {usersList.map((item, index) => (
                 <CTableRow v-for="item in tableItems" key={index}>
-                  <CTableDataCell className="text-center">
-                    <CAvatar size="md" src={item.avatar.src} status={item.avatar.status} />
+                  <CTableDataCell>
+                    <div>{item.fullName}</div>
+                    {/* <div className="small text-medium-emphasis">
+                      Registered: {item.user.registered}
+                    </div> */}
                   </CTableDataCell>
                   <CTableDataCell>
-                    <div>{item.user.name}</div>
-                    <div className="small text-medium-emphasis">
-                      Registered: {item.user.registered}
-                    </div>
+                    <div>{item.email}</div>
                   </CTableDataCell>
-                  <CTableDataCell className="text-center">
-                    <span>{Math.floor(Math.random() * 2) === 1 ? 'None' : 'Preview'}</span>
-                  </CTableDataCell>
-                  <CTableDataCell>Status</CTableDataCell>
-                  <CTableDataCell className="text-center">Wedding date</CTableDataCell>
-                  <CTableDataCell>management</CTableDataCell>
+                  <CTableDataCell>{item._id}</CTableDataCell>
+                  <CTableDataCell>+{item.phoneNumber}</CTableDataCell>
+                  <CTableDataCell className="text-center">{item.status}</CTableDataCell>
                 </CTableRow>
               ))}
             </CTableBody>
           </CTable>
-          {/* {cusers.length === 0 ? <NoSearchFound title="users" /> : ''}
-          {totalSize > sizePerPage ? (
-            <div className="float-end margin-container">
-              <Pagination
-                currentPage={currentPage}
-                totalSize={totalSize}
-                theme="bootstrap"
-                sizePerPage={sizePerPage}
-                changeCurrentPage={changeCurrentPage}
-                showFirstLastPages={true}
-              />
-            </div>
-          ) : (
-            ''
-          )} */}
+          <div className="float-end margin-container">
+            <Pagination
+              currentPage={1}
+              totalSize={50}
+              theme="bootstrap"
+              sizePerPage={10}
+              // changeCurrentPage={changeCurrentPage}
+              showFirstLastPages={true}
+            />
+          </div>
         </CCardBody>
       </CCard>
     </div>

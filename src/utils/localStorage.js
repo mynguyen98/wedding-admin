@@ -20,11 +20,11 @@ export const getUserFromLocalStorage = () => {
 export const getLocalAccessToken = () => {
   const user = getUserFromLocalStorage()
   if (!user) return null
-  return user.tokens.accessToken
+  return user.token
 }
 export const getLocalRefreshToken = () => {
   const user = getUserFromLocalStorage()
-  return user.tokens.refreshToken
+  return user.token
 }
 
 export const updateLocalAccessToken = (newAccessToken) => {
