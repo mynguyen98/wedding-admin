@@ -49,18 +49,49 @@ const initialSearchFields = {
   isPayedSearch: '',
   // titleSearch: '',
 }
+const initialStatePage = {
+  currentPage: 1,
+  totalSize: 50,
+  sizePerPage: 5,
+  addMorePage: true,
+  isLoading: false,
+}
 const CUsers = () => {
   // const dispatch = useDispatch()
   // const columnsControl = useSelector((store) => store.cusers.columnsControl)
   // const { userId, userName, status } = columnsControl
+  const [paginate, setPaginate] = useState(initialStatePage)
   const [usersList, setUsersList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchFields, setSearchFields] = useState(initialSearchFields)
 
-  // const handleResetPagination = () => {
-  //   dispatch(setAddMMorePage(true))
-  //   dispatch(updateCurrentPage(1))
-  // }
+  // handle pagination
+  const updateCurrentPage = (numPage) => {
+    setPaginate((prev) => ({ ...prev, currentPage: numPage }))
+  }
+  const setAddMorePage = (isAddMore) => {
+    setPaginate((prev) => ({ ...prev, addMorePage: isAddMore }))
+  }
+
+  const updateTotalSize = (stateChange) => {
+    if (stateChange === 'update') {
+      setPaginate((prev) => ({ ...prev, totalSize: prev.totalSize * 2 }))
+    }
+    if (stateChange === 'truncate') {
+      setPaginate((prev) => ({ ...prev, totalSize: prev.sizePerPage * prev.currentPage }))
+    }
+    if (stateChange === 'reduce') {
+      setPaginate((prev) => ({
+        ...prev,
+        totalSize: prev.totalSize - prev.sizePerPage,
+        currentPage: 1,
+      }))
+    }
+  }
+  const changeCurrentPage = (numPage) => {
+    updateCurrentPage(numPage)
+  }
+  // ----------------------------------------------------------------
   const handleChangeSearchField = (e) => {
     const name = e.target.name
     const value = e.target.value
@@ -80,7 +111,10 @@ const CUsers = () => {
     const getListUser = async () => {
       try {
         setIsLoading(true)
-        const resp = await customFetch.get(Api.listUsers)
+        const resp = await customFetch.get(Api.userPaginate, {
+          page: paginate.currentPage,
+          pageSize: paginate.sizePerPage,
+        })
         setUsersList(resp.data.data)
         setIsLoading(false)
       } catch (error) {
@@ -88,7 +122,7 @@ const CUsers = () => {
       }
     }
     getListUser()
-  }, [])
+  }, [paginate.currentPage])
   if (isLoading) return
 
   return (
@@ -203,11 +237,11 @@ const CUsers = () => {
           </CTable>
           <div className="float-end margin-container">
             <Pagination
-              currentPage={1}
-              totalSize={50}
+              currentPage={paginate.currentPage}
+              totalSize={paginate.totalSize}
               theme="bootstrap"
-              sizePerPage={10}
-              // changeCurrentPage={changeCurrentPage}
+              sizePerPage={paginate.sizePerPage}
+              changeCurrentPage={changeCurrentPage}
               showFirstLastPages={true}
             />
           </div>
