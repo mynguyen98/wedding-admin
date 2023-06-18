@@ -39,8 +39,9 @@ import {
   CAccordionHeader,
   CAccordionItem,
 } from '@coreui/react'
-
+import { getUser } from 'src/utils/axios'
 import { Api } from 'src/common/constant'
+import { dataFetchingPaginate } from 'src/utils/dataFetchingPaginate'
 // import KolIcon from '../icons/everstarIcon/Kol'
 
 const initialSearchFields = {
@@ -51,10 +52,9 @@ const initialSearchFields = {
 }
 const initialStatePage = {
   currentPage: 1,
-  totalSize: 50,
-  sizePerPage: 5,
+  totalSize: 30,
+  sizePerPage: 4,
   addMorePage: true,
-  isLoading: false,
 }
 const CUsers = () => {
   // const dispatch = useDispatch()
@@ -63,33 +63,12 @@ const CUsers = () => {
   const [paginate, setPaginate] = useState(initialStatePage)
   const [usersList, setUsersList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [filterName, setFilterName] = useState('')
   const [searchFields, setSearchFields] = useState(initialSearchFields)
 
   // handle pagination
-  const updateCurrentPage = (numPage) => {
-    setPaginate((prev) => ({ ...prev, currentPage: numPage }))
-  }
-  const setAddMorePage = (isAddMore) => {
-    setPaginate((prev) => ({ ...prev, addMorePage: isAddMore }))
-  }
-
-  const updateTotalSize = (stateChange) => {
-    if (stateChange === 'update') {
-      setPaginate((prev) => ({ ...prev, totalSize: prev.totalSize * 2 }))
-    }
-    if (stateChange === 'truncate') {
-      setPaginate((prev) => ({ ...prev, totalSize: prev.sizePerPage * prev.currentPage }))
-    }
-    if (stateChange === 'reduce') {
-      setPaginate((prev) => ({
-        ...prev,
-        totalSize: prev.totalSize - prev.sizePerPage,
-        currentPage: 1,
-      }))
-    }
-  }
   const changeCurrentPage = (numPage) => {
-    updateCurrentPage(numPage)
+    setPaginate((prev) => ({ ...prev, currentPage: numPage }))
   }
   // ----------------------------------------------------------------
   const handleChangeSearchField = (e) => {
@@ -107,22 +86,31 @@ const CUsers = () => {
     // handleResetPagination()
     setSearchFields({ ...initialSearchFields })
   }
+  // handle fetching data --------------------------------
   useEffect(() => {
-    const getListUser = async () => {
+    const getUserList = async () => {
       try {
         setIsLoading(true)
-        const resp = await customFetch.get(Api.userPaginate, {
-          page: paginate.currentPage,
-          pageSize: paginate.sizePerPage,
+        const { sizePerPage, currentPage } = paginate
+        const resp = await getUser({
+          pageSize: sizePerPage,
+          page: currentPage,
+          keyword: filterName,
         })
-        setUsersList(resp.data.data)
+        // update paginate after data fetching
+        const newPaginate = dataFetchingPaginate(paginate, resp.length)
+        setPaginate(newPaginate)
+        // -------------------------------------
+        setUsersList(resp)
         setIsLoading(false)
       } catch (error) {
         console.log(error)
       }
     }
-    getListUser()
-  }, [paginate.currentPage])
+
+    getUserList()
+  }, [paginate.currentPage, filterName])
+
   if (isLoading) return
 
   return (
@@ -209,6 +197,7 @@ const CUsers = () => {
           <CTable align="middle" className="mb-0 border" hover responsive>
             <CTableHead color="light">
               <CTableRow>
+                <CTableHeaderCell>Stt</CTableHeaderCell>
                 <CTableHeaderCell>User name</CTableHeaderCell>
                 <CTableHeaderCell>User email</CTableHeaderCell>
                 <CTableHeaderCell>UserId</CTableHeaderCell>
@@ -219,6 +208,8 @@ const CUsers = () => {
             <CTableBody>
               {usersList.map((item, index) => (
                 <CTableRow v-for="item in tableItems" key={index}>
+                  <CTableDataCell>{index + 1}</CTableDataCell>
+
                   <CTableDataCell>
                     <div>{item.fullName}</div>
                     {/* <div className="small text-medium-emphasis">
@@ -242,7 +233,6 @@ const CUsers = () => {
               theme="bootstrap"
               sizePerPage={paginate.sizePerPage}
               changeCurrentPage={changeCurrentPage}
-              showFirstLastPages={true}
             />
           </div>
         </CCardBody>
