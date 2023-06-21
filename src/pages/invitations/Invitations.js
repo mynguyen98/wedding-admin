@@ -111,11 +111,11 @@ const CUsers = () => {
     getUserList()
   }, [paginate.currentPage, filterName])
 
-  if (isLoading) return
   console.log(usersList)
   return (
     <div>
       {/* <AppBreadcrumb /> */}
+      {isLoading && <CSpinner />}
       <div className="row-align ">
         <h5 style={{ margin: '0' }}>Invitations</h5>
       </div>
@@ -194,31 +194,27 @@ const CUsers = () => {
             </CAccordionItem>
           </CAccordion>
 
-          <CTable align="middle" className="mb-0 border" hover responsive>
+          <CTable align="middle " className="mb-0 border" hover responsive>
             <CTableHead color="light">
               <CTableRow>
                 <CTableHeaderCell>Stt</CTableHeaderCell>
-                <CTableHeaderCell>Invitation id</CTableHeaderCell>
+                <CTableHeaderCell className="text-center">Name</CTableHeaderCell>
                 <CTableHeaderCell>Email</CTableHeaderCell>
-                <CTableHeaderCell>UserId</CTableHeaderCell>
-                <CTableHeaderCell>Phone Number</CTableHeaderCell>
-                <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
+                <CTableHeaderCell>Invitation Id</CTableHeaderCell>
+                <CTableHeaderCell>Phone number</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {usersList.map((item, index) => (
+              {usersList?.map((item, index) => (
                 <CTableRow v-for="item in tableItems" key={index}>
-                  {/* <CTableDataCell>{index + 1}</CTableDataCell>
+                  <CTableDataCell>{index + 1}</CTableDataCell>
 
-                  <CTableDataCell>
-                    <div>{item.fullName}</div>
-                  </CTableDataCell>
+                  <CTableDataCell className="text-center">{item.userName}</CTableDataCell>
                   <CTableDataCell>
                     <div>{item.email}</div>
                   </CTableDataCell>
                   <CTableDataCell>{item._id}</CTableDataCell>
-                  <CTableDataCell>+{item.phoneNumber}</CTableDataCell> */}
-                  <CTableDataCell className="text-center">{item.userName}</CTableDataCell>
+                  <CTableDataCell>+{item.phoneNumber}</CTableDataCell>
                 </CTableRow>
               ))}
             </CTableBody>
