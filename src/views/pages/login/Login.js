@@ -26,8 +26,8 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm>
-                    <h1>Login</h1>
-                    <p className="text-medium-emphasis">Sign In to your account</p>
+                    <h1>Đăng nhập</h1>
+                    <p className="text-medium-emphasis">Đăng nhập vào tài khoản của bạn</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
@@ -46,27 +46,27 @@ const Login = () => {
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="primary" className="px-4">
-                          Login
+                        <CButton color="success" className="px-4">
+                          Đăng nhập
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
                         <CButton color="link" className="px-0">
-                          Forgot password?
+                          Quên mật khẩu
                         </CButton>
                       </CCol>
                     </CRow>
                   </CForm>
                 </CCardBody>
               </CCard>
-              <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
+              <CCard className="text-white bg-success py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
                   <div>
-                    <h2>Sign In</h2>
-                    <p>Wellcome to Wedding Admin</p>
+                    <h2>Đăng nhập</h2>
+                    <p>Chào mừng bạn đến với hệ thống</p>
                     <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>
-                        Register Now!
+                      <CButton color="light" className="mt-3" active tabIndex={-1}>
+                        Đăng kí ngay
                       </CButton>
                     </Link>
                   </div>

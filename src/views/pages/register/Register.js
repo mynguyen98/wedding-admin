@@ -6,6 +6,7 @@ import {
   CCol,
   CContainer,
   CForm,
+  CFormCheck,
   CFormInput,
   CInputGroup,
   CInputGroupText,
@@ -23,13 +24,13 @@ const Register = () => {
             <CCard className="mx-4">
               <CCardBody className="p-4">
                 <CForm>
-                  <h1>Register</h1>
-                  <p className="text-medium-emphasis">Create your account</p>
+                  <h1>Đăng kí</h1>
+                  <p className="text-medium-emphasis">Đăng kí tài khoản</p>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
-                    <CFormInput placeholder="Username" autoComplete="username" />
+                    <CFormInput placeholder="Tên tài khoản" autoComplete="username" />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>@</CInputGroupText>
@@ -41,7 +42,7 @@ const Register = () => {
                     </CInputGroupText>
                     <CFormInput
                       type="password"
-                      placeholder="Password"
+                      placeholder="Mật khẩu"
                       autoComplete="new-password"
                     />
                   </CInputGroup>
@@ -51,12 +52,16 @@ const Register = () => {
                     </CInputGroupText>
                     <CFormInput
                       type="password"
-                      placeholder="Repeat password"
+                      placeholder="nhập lại mật khẩu"
                       autoComplete="new-password"
                     />
                   </CInputGroup>
+
+                  <CInputGroup className="mb-4">
+                    <CFormCheck id="flexCheckDefault" label="Quyền nhân viên" />
+                  </CInputGroup>
                   <div className="d-grid">
-                    <CButton color="success">Create Account</CButton>
+                    <CButton color="success">Tạo tài khoản</CButton>
                   </div>
                 </CForm>
               </CCardBody>
