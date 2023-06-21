@@ -67,7 +67,7 @@ const CUsers = () => {
   const [filterName, setFilterName] = useState('')
   const [searchFields, setSearchFields] = useState(initialSearchFields)
 
-  // handle pagination
+  // handle pagination for pagination updates
   const changeCurrentPage = (numPage) => {
     setPaginate((prev) => ({ ...prev, currentPage: numPage }))
   }
