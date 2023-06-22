@@ -1,18 +1,5 @@
 import React, { useState, useEffect } from 'react'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { useState } from 'react'
-// import { cusersList, updateCurrentPage, setAddMMorePage } from 'src/features/cusers/cusersSlice'
-// import Pagination from 'react-pagination-js'
-// import 'react-pagination-js/dist/styles.css' // import css
-// import { showModal } from 'src/features/uiSlice'
-// import SetToKolModal from './SetToKolModal'
-// import ToggleBannedCuser from './ToggleBannedCuser'
-// import NoSearchFound from '../myui/NoSearchFound'
-// import FilterHideShowCtable from '../myui/FilterHideShowCtable'
-// import FilterCtable from './FilterCtable'
 import { AppBreadcrumb } from 'src/components'
-// import { Link } from 'react-router-dom'
-// import { avatarLink } from 'src/utils/helpers'
 import { customFetch } from 'src/utils/axios'
 import Pagination from 'react-pagination-js'
 import 'react-pagination-js/dist/styles.css' // import css
@@ -38,11 +25,21 @@ import {
   CAccordionBody,
   CAccordionHeader,
   CAccordionItem,
+  CDropdown,
+  CDropdownToggle,
+  CDropdownMenu,
+  CDropdownItem,
+  CModal,
+  CModalHeader,
+  CModalFooter,
 } from '@coreui/react'
 import { getUser } from 'src/utils/axios'
 import { getInvitations } from 'src/utils/axios'
 import { Api } from 'src/common/constant'
 import { dataFetchingPaginate } from 'src/utils/dataFetchingPaginate'
+import { cilOptions } from '@coreui/icons'
+import CIcon from '@coreui/icons-react'
+import { toast } from 'react-toastify'
 // import KolIcon from '../icons/everstarIcon/Kol'
 
 const initialSearchFields = {
@@ -66,7 +63,8 @@ const CUsers = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [filterName, setFilterName] = useState('')
   const [searchFields, setSearchFields] = useState(initialSearchFields)
-
+  const [isModalActive, setIsModalActive] = useState(false)
+  const [invitationActiveId, setInvitationActiveId] = useState('')
   // handle pagination for pagination updates
   const changeCurrentPage = (numPage) => {
     setPaginate((prev) => ({ ...prev, currentPage: numPage }))
@@ -110,7 +108,17 @@ const CUsers = () => {
 
     getUserList()
   }, [paginate.currentPage, filterName])
-
+  const handleActiveInvitations = async () => {
+    const data = { _id: invitationActiveId }
+    try {
+      const resp = await customFetch.post('/active-invitation', data)
+      toast.success('Active Invitation successfully')
+      setIsModalActive(false)
+    } catch (error) {
+      console.log(error)
+      toast.error('Active Invitation failed')
+    }
+  }
   console.log(usersList)
   return (
     <div>
@@ -202,6 +210,7 @@ const CUsers = () => {
                 <CTableHeaderCell>Email</CTableHeaderCell>
                 <CTableHeaderCell>Invitation Id</CTableHeaderCell>
                 <CTableHeaderCell>Phone number</CTableHeaderCell>
+                <CTableHeaderCell>More</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -215,6 +224,23 @@ const CUsers = () => {
                   </CTableDataCell>
                   <CTableDataCell>{item._id}</CTableDataCell>
                   <CTableDataCell>+{item.phoneNumber}</CTableDataCell>
+                  <CTableDataCell className="text-center" style={{ cursor: 'pointer' }}>
+                    <CDropdown>
+                      <CDropdownToggle>
+                        <CIcon icon={cilOptions} />
+                      </CDropdownToggle>
+                      <CDropdownMenu>
+                        <CDropdownItem
+                          onClick={() => {
+                            setIsModalActive(true)
+                            setInvitationActiveId(item._id)
+                          }}
+                        >
+                          Active Invitation
+                        </CDropdownItem>
+                      </CDropdownMenu>
+                    </CDropdown>
+                  </CTableDataCell>
                 </CTableRow>
               ))}
             </CTableBody>
@@ -230,6 +256,17 @@ const CUsers = () => {
           </div>
         </CCardBody>
       </CCard>
+      <CModal visible={isModalActive} onClose={() => setIsModalActive(false)} alignment="center">
+        <CModalHeader>Are you sure to active this invitation?</CModalHeader>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setIsModalActive(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={handleActiveInvitations}>
+            Confirm
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   )
 }
