@@ -111,11 +111,9 @@ const CUsers = () => {
     getUserList()
   }, [paginate.currentPage, filterName])
 
-  if (isLoading) return
-
   return (
     <div>
-      {/* <AppBreadcrumb /> */}
+      {isLoading && <CSpinner />}
       <div className="row-align ">
         <h5 style={{ margin: '0' }}>Người dùng</h5>
         <br />
@@ -207,7 +205,7 @@ const CUsers = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {usersList.map((item, index) => (
+              {usersList?.map((item, index) => (
                 <CTableRow v-for="item in tableItems" key={index}>
                   <CTableDataCell>{index + 1}</CTableDataCell>
 

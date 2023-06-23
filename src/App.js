@@ -2,7 +2,8 @@ import React, { Component, Suspense } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import './scss/style.scss'
 import ProtectedRoute from './components/ProtectedRoute'
-
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 const loading = (
   <div className="pt-3 text-center">
     <div className="sk-spinner sk-spinner-pulse"></div>
@@ -39,6 +40,7 @@ class App extends Component {
             />
           </Routes>
         </Suspense>
+        <ToastContainer />
       </HashRouter>
     )
   }
